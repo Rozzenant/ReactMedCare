@@ -10,8 +10,8 @@ export default defineConfig({
       '/medical-procedures': 'http://127.0.0.1:8000',
     },
   },
-  base: "React_Medicine",
+  // base: "React_Medicine",
   plugins: [react()],
-  // base: "/main-page",
+  base: "/main-page/",
 })
 

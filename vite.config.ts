@@ -12,6 +12,6 @@ export default defineConfig({
   },
   // base: "React_Medicine",
   plugins: [react()],
-  base: "/main-page/",
+  base: "/main-page",
 })
 

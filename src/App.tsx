@@ -1,15 +1,15 @@
 import './App.css'
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import ProcedureList from '../components/ProcedureList.tsx';
-import ProcedureAbout from '../components/ProcedureAbout/ProcedureAbout.tsx'
+import First_aid_List from '../components/First_aid_List.tsx';
+import First_aid_About from '../components/First_aid_About/First_aid_About.tsx'
 
 function App() {
 
   return (
-      <BrowserRouter basename="/main-page">
+      <BrowserRouter basename="/ReactMedCare">
         <Routes>
-          <Route path="" element={<ProcedureList />} />
-          <Route path="/about/" element={<ProcedureAbout />} />
+          <Route path="" element={<First_aid_List />} />
+          <Route path="/:id" element={<First_aid_About />} />
         </Routes>
     </BrowserRouter>
   )

@@ -1,18 +1,18 @@
-import {ProcedureInter} from '../../Models/procedure.tsx';
+import {First_aid_Inter} from '../../Models/First_aid.tsx';
 import image from './defaultImg.png';
 
-export const mockObjects: ProcedureInter[] =[
+export const mockObjects: First_aid_Inter[] =[
           {
-              "Procedure_ID": 3,
-              "Procedure_Name": "Искуственная вентиляция легких",
+              "First_aid_ID": 3,
+              "First_aid_Name": "Искуственная вентиляция легких",
               "Description": "Аппарат искусственной вентиляции лёгких (аппарат ИВЛ) — это медицинское оборудование, которое предназначено для принудительной подачи газовой смеси (кислород и сжатый осушенный воздух) в лёгкие с целью насыщения крови кислородом и удаления из лёгких углекислого газа.",
               "Price": 12.99,
               "Status": 1,
               "Image_URL": image
           },
           {
-              "Procedure_ID": 7,
-              "Procedure_Name": "Промывание желудка",
+              "First_aid_ID": 7,
+              "First_aid_Name": "Промывание желудка",
               "Description": "1. Информируйте пациента о предстоящей манипуляции и ходе ее выполнения.\n" +
                   "2. Вымойте руки.\n" +
                   "3. Подготовьте систему для промывания желудка.\n" +
@@ -27,8 +27,8 @@ export const mockObjects: ProcedureInter[] =[
               "Image_URL": image
           },
           {
-              "Procedure_ID": 2,
-              "Procedure_Name": "Инъекция",
+              "First_aid_ID": 2,
+              "First_aid_Name": "Инъекция",
               "Description": "1. Вымыть руки теплой водой с мылом.\n" +
                   "2. Надеть стерильные перчатки (латексные или нитриловые). Если перчатки не из стерильного пакета, необходимо обработать их спиртом.\n" +
                   "3. Обнажить место для введения препарата.\n" +
@@ -46,8 +46,8 @@ export const mockObjects: ProcedureInter[] =[
               "Image_URL": image
           },
           {
-              "Procedure_ID": 1,
-              "Procedure_Name": "Клинический осмотр",
+              "First_aid_ID": 1,
+              "First_aid_Name": "Клинический осмотр",
               "Description": "1. Подробный опрос: наводящие вопросы пациенту для сбора анамнеза болезни.\n" +
                   "2. Изучение истории болезни.\n" +
                   "3. Внешний осмотр больного.\n" +
@@ -60,8 +60,8 @@ export const mockObjects: ProcedureInter[] =[
               "Image_URL": image
           },
           {
-              "Procedure_ID": 9,
-              "Procedure_Name": "Общий анализ крови",
+              "First_aid_ID": 9,
+              "First_aid_Name": "Общий анализ крови",
               "Description": "Общий анализ крови позволяет получить представление об объемном соотношении клеточных элементов и жидкой части крови (гематокрите), содержании отдельных видов форменных элементов крови (эритроцитов, лейкоцитов, тромбоцитов), концентрации гемоглобина, основных характеристиках эритроцитов (эритроцитарные индексы)",
               "Price": 1.99,
               "Status": 1,

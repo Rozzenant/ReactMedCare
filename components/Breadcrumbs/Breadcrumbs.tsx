@@ -1,6 +1,6 @@
-import { Breadcrumb } from 'react-bootstrap';
-import { Link, useLocation } from 'react-router-dom';
-import { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { useLocation, Link } from 'react-router-dom';
+import Breadcrumb from 'react-bootstrap/Breadcrumb';
 
 const Breadcrumbs: React.FC = () => {
   const location = useLocation();
@@ -11,10 +11,15 @@ const Breadcrumbs: React.FC = () => {
     setCurrentPath(pathNames);
   }, [location.pathname]);
 
+  if (currentPath.length === 0) {
+    return null;
+  }
+
   return (
     <Breadcrumb>
+      <Breadcrumb.Item linkAs={Link} linkProps={{ to: '/' }}>medical_care</Breadcrumb.Item>
       {currentPath.map((path, index) => (
-        <Breadcrumb.Item  key={index} linkAs={Link} linkProps= {{ to: `/${currentPath.slice(0, index + 1).join('/')}` }} >
+        <Breadcrumb.Item key={path} linkAs={Link} linkProps={{ to: `/${currentPath.slice(0, index + 1).join('/')}` }}>
           {path}
         </Breadcrumb.Item>
       ))}

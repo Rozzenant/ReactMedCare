@@ -1,0 +1,20 @@
+.button-style {
+    background-color: #6fbce3;
+    border-color: lightgrey;
+    color: white;
+    transition: 0.1s ease; /* Уменьшенное время анимации при наведении */
+}
+
+.button-style:hover {
+    background-color: #88c3dc;
+    border-color: lightgrey;
+}
+
+.button-style:active {
+    background-color: #5487a8;
+    border-color: lightgrey;
+}
+
+.button-style-more {
+    width: 100%;
+}

@@ -20,7 +20,7 @@ const First_aid_List: React.FC = () => {
 
   useEffect(() => {
     if (!dataLoaded) {
-      fetch("http://127.0.0.1:8000/first_aid")
+      fetch("http://127.0.0.1:8000/first_aid/")
         .then((response) => {
           if (response.ok) {
             return response.json();

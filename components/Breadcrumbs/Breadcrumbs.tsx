@@ -5,7 +5,6 @@ import Breadcrumb from "react-bootstrap/Breadcrumb";
 const Breadcrumbs: React.FC = () => {
   const location = useLocation();
   const [currentPath, setCurrentPath] = useState<string[]>([]);
-  console.log('1')
 
 
   useEffect(() => {

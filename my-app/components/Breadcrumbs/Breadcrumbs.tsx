@@ -6,6 +6,7 @@ const Breadcrumbs: React.FC = () => {
   const location = useLocation();
   const [currentPath, setCurrentPath] = useState<string[]>([]);
 
+
   useEffect(() => {
     const pathNames = location.pathname
       .split("/")

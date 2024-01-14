@@ -8,8 +8,13 @@ import NavigationBar from "../Navbar/Navbar";
 const SingleTrauma: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const trauma = useSelector((state: RootState) => {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-expect-error
     return state.traumas.traumas.find(trauma => trauma.Trauma_ID.toString() === id);
   });
+
+
+
 
   return (
     <>
@@ -35,5 +40,5 @@ const SingleTrauma: React.FC = () => {
     </>
   );
 };
-
+//
 export default SingleTrauma;

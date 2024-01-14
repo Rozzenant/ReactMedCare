@@ -18,3 +18,11 @@
 .button-style-more {
     width: 100%;
 }
+
+.button-style:disabled {
+  color: grey;
+  background-color: lightgray;
+  opacity: 0.7;
+  cursor: not-allowed;
+  border-color: darkgrey;
+}

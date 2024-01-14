@@ -6,15 +6,7 @@ import { login } from '../../store/UserSlice';
 import { Link, useNavigate } from 'react-router-dom';
 import { setTraumas } from '../../store/TraumaSlice';
 import { addToCart } from '../../store/CartSlice';
-// export interface ObjectInt {
-//   ID_Object: number;
-//   Name_Obj: string;
-//   Region: string;
-//   Year: number;
-//   Opener: string;
-//   Status: string;
-//   Image_Url: string;
-// }
+
 
 interface FirstAidInt {
   FirstAid_ID: number;
@@ -23,20 +15,7 @@ interface FirstAidInt {
   ImageURL: string;
   Price: number;
 }
-// interface Expedition {
-//   ID_Expedition: number;
-//   Name_Exp: string;
-//   DateStart: string;
-//   DateEnd: string | null;
-//   DateApproving: string | null;
-//   Status: string;
-//   Leader: string;
-//   ModeratorId: number | null;
-//   CreatorId: number | null;
-//   Describe: string | null;
-//   Objects: ObjectInt[]; // Массив идентификаторов объектов
-//   Archive: string | null;
-// }
+
 
 interface TraumaInt {
   TraumaID: number;
@@ -50,7 +29,7 @@ interface TraumaInt {
   ConfirmationDoctor: string;
 }
 
-const AxiosExpeditions = async (token:unknown) => {
+const AxiosTraumas = async (token:unknown) => {
   try {
 
     const response = await axios.get(
@@ -58,7 +37,7 @@ const AxiosExpeditions = async (token:unknown) => {
       {
         withCredentials: true,
         headers: {
-          'Authorization': `Bearer ${token}`,
+          'Authorization': `${token}`,
           'Content-Type': 'application/json',
         },
       }
@@ -94,12 +73,12 @@ const Auth: React.FC = () => {
           password: password
         };
         dispatch(login(datauser));
+        console.log(response.data)
+        document.cookie = `jwt=${response.data.Authorization}; path=/`;
 
-        document.cookie = `jwt=${response.data.jwt}; path=/`;
+        const traumasData: TraumaInt[] = await AxiosTraumas(response.data.Authorization);
 
-        const traumasData: TraumaInt[] = await AxiosExpeditions(response.data.jwt);
-
-        console.log('TraumaData:',traumasData);
+        // console.log('TraumaData:',traumasData);
         const traumaIn = traumasData.find(trauma => trauma.Status === 'Draft');
         dispatch(setTraumas(traumasData));
         if (traumaIn) {
@@ -116,12 +95,6 @@ const Auth: React.FC = () => {
     }
   };
 
-  // const handleRegisterRedirect = () => {
-  //   const hello='to register';
-  //   console.log(hello);
-  //   // window.location.href = '/Main/register';
-  //   // <Link to="/Main/register">Регистрация</Link>
-  // };
 
   return (
     <Container className="mt-5">
@@ -151,9 +124,6 @@ const Auth: React.FC = () => {
               <Button variant="primary" onClick={handleLogin} style={{ marginRight: '15px' }}>
                 Войти
               </Button>
-              {/* <Button variant="secondary" onClick={handleRegisterRedirect}>
-                Регистрация
-              </Button> */}
               <Link to="/register">
                 <Button variant="secondary">
                   Регистрация

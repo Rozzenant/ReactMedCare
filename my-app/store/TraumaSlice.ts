@@ -1,9 +1,9 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface FirstAidInt {
-  FirstAid_ID: number;
-  FirstAid_Name: string;
+  First_aid_ID: number;
+  First_aid_Name: string;
   Description: string;
-  ImageURL: string;
+  Image_URL: string;
   Price: number;
 }
 
@@ -21,7 +21,7 @@ interface TraumaInt {
 }
 
 interface TraumasState {
-  traumas: TraumaInt[];
+  traumas: TraumaInt[] | null;
 }
 
 const initialState: TraumasState = {
@@ -35,9 +35,12 @@ const traumasSlice = createSlice({
     setTraumas(state, action: PayloadAction<TraumaInt[]>) {
       state.traumas = action.payload;
     },
+    removeTraumas(state){
+      state.traumas = null;
+    }
 
   },
 });
 
-export const { setTraumas} = traumasSlice.actions;
+export const { setTraumas, removeTraumas} = traumasSlice.actions;
 export default traumasSlice.reducer;

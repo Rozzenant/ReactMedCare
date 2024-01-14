@@ -1,12 +1,12 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/store';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import NavigationBar from "../Navbar/Navbar";
-import { addToCart, removeFromCart } from '../../store/CartSlice';
-import { setTraumas } from '../../store/TraumaSlice';
+// import { setTraumas } from '../../store/TraumaSlice';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import {change_status_trauma_draft, set_trauma_draft_id} from "../../store/UserSlice.ts";
 
 interface FirstAidInt {
   First_aid_ID: number;
@@ -31,297 +31,163 @@ interface TraumaInt {
 
 
 const Traumas: React.FC = () => {
-  const trauma = useSelector((state: RootState) => state.cart.trauma);
   // const userTrauma = useSelector((state: RootState) => state.traumas.traumas);
+  const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
-  const [formData, setFormData] = useState<TraumaInt | null>(trauma);
+  const [formData, setFormData] = useState<TraumaInt | null>(null);
   const navigate = useNavigate();
+  const [message, setMessage] = useState('')
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const updatedFormData = { ...formData };
     updatedFormData.Trauma_Name = e.target.value;
 
     setFormData(updatedFormData);
   };
-  const deleteTrauma = async (trauma_ID: number) => {
+
+  useEffect(() => {
+    axios.get(
+        `http://127.0.0.1:8000/trauma/${user.trauma_draft_id}`,
+        {
+          withCredentials: true,
+          headers: {
+            'Authorization': `${user.jwt}`,
+            'Content-Type': 'application/json',
+          },
+        }
+    )
+      .then((response) => {
+        const data = response.data;
+        setFormData(data)
+      })
+      .catch((error) => {
+        if (error.response.status == 404){
+          navigate('/')
+        }
+        // console.error(error);
+        // setDataLoaded(true);
+      });
+}, []);
+
+  const handleDeleteTrauma = async () => {
     try {
-      const jwtTokenCookie = document.cookie.split('; ').find(row => row.startsWith('jwt='));
-      if (jwtTokenCookie) {
-        const token = jwtTokenCookie.split('=')[1];
+      if (user.trauma_draft){
         const response = await axios.delete(
-          `http://127.0.0.1:8000/trauma/${trauma_ID}/delete`,
+          `http://127.0.0.1:8000/trauma/${user.trauma_draft_id}/delete`,
           {
             withCredentials: true,
             headers: {
-              'Authorization': `b'${token}'`,
+              'Authorization': `${user.jwt}`,
               'Content-Type': 'application/json',
             },
           }
         );
 
-        if (response.status === 200) {
-          const responseTrauma = await axios.get(
-            'http://127.0.0.1:8000/trauma/',
-            {
-              withCredentials: true,
-              headers: {
-                'Authorization': `b'${token}'`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-          if (responseTrauma.status === 200) {
-            const traumaData: TraumaInt[] = Array.isArray(responseTrauma.data) ? responseTrauma.data : [];
-            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-            // @ts-expect-error
-            dispatch(setTraumas(traumaData));
-            dispatch(removeFromCart());
-            navigate('/');
+
+        if (response.status === 200 || response.status === 204) {
+          setFormData(null);
+          // navigate('/');
+          if (user.trauma_draft) {
+            dispatch(change_status_trauma_draft())
           }
-        } else {
-          throw new Error('Ошибка при удалении поражения');
         }
-      }
+
+    }
+
     } catch (error) {
       console.error('Произошла ошибка:', error);
     }
   };
-  const handleDeleteTrauma = () => {
-    if (trauma?.Trauma_ID) {
-      deleteTrauma(trauma.Trauma_ID);
-    }
-  };
-  const handleFormSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    let traumaIN;
-    try {
-      if (formData && trauma !== null) {
-        const jwtTokenCookie = document.cookie.split('; ').find(row => row.startsWith('jwt='));
 
-        if (jwtTokenCookie) {
-          const token = jwtTokenCookie.split('=')[1];
-          const trauma_ID = trauma.Trauma_ID;
-          const responseChange = await axios.put(
-              `http://127.0.0.1:8000/trauma/${trauma_ID}/`,
+  const handleFormSubmit = async () => {
+    try {
+      if (formData) {
+          const trauma_ID = user.trauma_draft_id;
+          await axios.put(
+              `http://127.0.0.1:8000/trauma/${trauma_ID}`,
               formData,
               {
                 withCredentials: true,
                 headers: {
-                  'Authorization': `b'${token}'`,
+                  'Authorization': `${user.jwt}`,
                   'Content-Type': 'application/json',
                 },
               }
           );
 
-          if (responseChange.status === 200) {
-            const responseTrauma = await axios.get(
-                'http://127.0.0.1:8000/trauma/',
-                {
-                  withCredentials: true,
-                  headers: {
-                    'Authorization': `b'${token}'`,
-                    'Content-Type': 'application/json',
-                  },
-                }
-            );
+          // console.log(formData);
 
-            if (responseTrauma.status === 200) {
-              const traumasData: TraumaInt[] = Array.isArray(responseTrauma.data) ? responseTrauma.data : [];
 
-              const responseFirst_aid = await axios.get(
-                  'http://127.0.0.1:8000/first_aid/',
-                  {
-                    withCredentials: true,
-                    headers: {
-                      'Authorization': `b'${token}'`,
-                      'Content-Type': 'application/json',
-                    },
-                  }
-              );
-              if (responseFirst_aid.status == 200) {
-                traumaIN = responseFirst_aid.data['trauma_draft'];
-              } else {
-                traumaIN = null;
-              }
-
-              dispatch(setTraumas(traumasData));
-              if (traumaIN) {
-                console.log('cart:', traumaIN);
-                dispatch(addToCart(traumaIN));
-              }
-            }
           } else {
-            throw new Error('Ошибка при отправке данных на бэкенд');
+            console.error("Ошибка отправки данных на бэк")
           }
-        }
-      }
+
     } catch (error) {
       console.error('Произошла ошибка:', error);
     }
   };
 
 
-  const handleDeleteFirst_Aid = async (trauma_ID: number, first_aid_ID: number) => {
-    let traumaIN;
+  const handleDeleteFirst_Aid = async (trauma_ID: string | null, first_aid_ID: number) => {
     try {
-      const jwtTokenCookie = document.cookie.split('; ').find(row => row.startsWith('jwt='));
-      if (jwtTokenCookie) {
-        const token = jwtTokenCookie.split('=')[1];
-        const response = await axios.delete(
+        await axios.delete(
             `http://127.0.0.1:8000/trauma/${trauma_ID}/delete_first_aid/${first_aid_ID}`,
             {
               withCredentials: true,
               headers: {
-                'Authorization': `b'${token}'`,
+                'Authorization': `${user.jwt}`,
                 'Content-Type': 'application/json',
               },
             }
         );
 
-        if (response.status === 204) {
-          const responseTrauma = await axios.get(
-              'http://127.0.0.1:8000/trauma/',
-              {
-                withCredentials: true,
-                headers: {
-                  'Authorization': `b'${token}'`,
-                  'Content-Type': 'application/json',
-                },
-              }
-          );
-          if (responseTrauma.status === 200) {
-            const traumasData: TraumaInt[] = Array.isArray(responseTrauma.data) ? responseTrauma.data : [];
-
-            const responseFirst_aid = await axios.get(
-                'http://127.0.0.1:8000/first_aid/',
-                {
-                  withCredentials: true,
-                  headers: {
-                    'Authorization': `b'${token}'`,
-                    'Content-Type': 'application/json',
-                  },
-                }
-            );
-            if (responseFirst_aid.status == 200) {
-              traumaIN = responseFirst_aid.data['trauma_draft'];
-            } else {
-              traumaIN = null;
-            }
-
-            // if (traumaIN !== null) {
-            //   const responseChange = await axios.delete(
-            //       `http://127.0.0.1:8000/trauma/${traumaIN}/delete`,
-            //       {
-            //         withCredentials: true,
-            //         headers: {
-            //           'Authorization': `b'${token}'`,
-            //           'Content-Type': 'application/json',
-            //         },
-            //       }
-            //   );
-            //
-            //   if (responseChange.status === 200) { /* empty */ }
-            // }
-
-            dispatch(setTraumas(traumasData));
-            if (traumaIN !== null) {
-              const responseChange = await axios.get(
-                  `http://127.0.0.1:8000/trauma/${traumaIN}`,
-                  {
-                    withCredentials: true,
-                    headers: {
-                      'Authorization': `b'${token}'`,
-                      'Content-Type': 'application/json',
-                    },
-                  }
-              );
-
-              if (responseChange.status == 200){
-                traumaIN = responseChange.data;
-              }
-              console.log(traumaIN);
-              dispatch(addToCart(traumaIN));
-              const updatedFormData = {...formData};
-              updatedFormData.First_aid_in_Trauma_List = updatedFormData.First_aid_in_Trauma_List?.filter(
-                  (first_aid) => first_aid.First_aid_ID !== first_aid_ID
-              );
-
-              setFormData(updatedFormData);
-
-            }
+        const responseTrauma = await axios.get(
+          `http://127.0.0.1:8000/trauma/${user.trauma_draft_id}`,
+          {
+            withCredentials: true,
+            headers: {
+              'Authorization': `${user.jwt}`,
+              'Content-Type': 'application/json',
+            },
           }
+        );
 
-        } else {
-          throw new Error('Ошибка при удалении первой помощи из поражения');
+        if (responseTrauma.status === 200) {
+          if (responseTrauma.data.First_aid_in_Trauma_List.length === 0){
+            handleDeleteTrauma();
+          }
+            setFormData(responseTrauma.data);
         }
-      }
+
     } catch (error) {
       console.error('Произошла ошибка при удалении первой помощи:', error);
     }
   };
   const handleFormTrauma = async () => {
     try {
-      const jwtTokenCookie = document.cookie.split('; ').find(row => row.startsWith('jwt='));
-      if (jwtTokenCookie) {
-        const token = jwtTokenCookie.split('=')[1];
-        const responseFirstAid = await axios.get(
-        'http://127.0.0.1:8000/first_aid/',
+        await axios.put(
+        `http://127.0.0.1:8000/trauma/${user.trauma_draft_id}/status_to_formed/`,
+            null,
         {
           withCredentials: true,
           headers: {
-            'Authorization': `b'${token}'`,
+            'Authorization': `${user.jwt}`,
             'Content-Type': 'application/json',
           },
         }
       );
-        
-        if (responseFirstAid.status === 200) {
-          const firstAidData = responseFirstAid.data;
-          if (firstAidData && firstAidData['trauma_draft'] !== null){
-            const id: number = firstAidData['trauma_draft'];
-            const response = await axios.get(
-          `http://127.0.0.1:8000/trauma/${id}/status_to_formed/`,
-          {
-            withCredentials: true,
-            headers: {
-              'Authorization': `b'${token}'`,
-              'Content-Type': 'application/json',
-            },
-          }
-        );
 
 
-            if (response.status === 200) {
-          const responseTrauma = await axios.get(
-            'http://127.0.0.1:8000/trauma/',
-            {
-              withCredentials: true,
-              headers: {
-                'Authorization': `b'${token}'`,
-                'Content-Type': 'application/json',
-              },
-            }
-          );
-          if (responseTrauma.status===200){
-            const traumasData: TraumaInt[] = Array.isArray(responseTrauma.data) ? responseTrauma.data : [];
-            const TraumaIN = traumasData.find(trauma => trauma.Status === 'Draft');
-            dispatch(setTraumas(traumasData));
+        handleFormSubmit();
+        dispatch(set_trauma_draft_id({'trauma_draft_id': null}))
+        dispatch(change_status_trauma_draft())
+        navigate("/");
 
-            console.log('cart:',TraumaIN);
-            dispatch(removeFromCart());
-            console.log('cart2:',TraumaIN);
-            navigate('/');
 
-          }
-        }
-
-          }
-          console.log('Данные успешно получены');
-        } else {
-          throw new Error('Ошибка при формировании поражения');
-        }
-      }
     } catch (error) {
-      console.error('Произошла ошибка:', error);
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-expect-error
+      setMessage(error.response.data['detail'])
+      console.log('Произошла ошибка:', error);
     }
   };
   return (
@@ -336,10 +202,12 @@ const Traumas: React.FC = () => {
                   <Form.Control
                     type="text"
                     defaultValue={formData?.Trauma_Name || ''}
+                    placeholder='Введите название трамвы'
+                    disabled={!user.trauma_draft}
                     onChange={handleNameChange}
                   />
                 </Form.Group>
-                <Form.Group controlId="formObjects" className="mb-2  text-center">
+                <Form.Group controlId="formFirst_aids" className="mb-2  text-center">
                   <h4>Список первых помощей</h4>
                   <div className="d-flex flex-column">
                     {formData?.First_aid_in_Trauma_List && formData.First_aid_in_Trauma_List.map((first_aid) => (
@@ -351,7 +219,7 @@ const Traumas: React.FC = () => {
                           <Button
                             size="sm"
                             onClick={() => {
-                              handleDeleteFirst_Aid(trauma?.Trauma_ID || 0, first_aid.First_aid_ID);
+                              handleDeleteFirst_Aid(user.trauma_draft_id, first_aid.First_aid_ID);
                             }}
                             className={"button-style button-style-more"}
                           >
@@ -365,13 +233,14 @@ const Traumas: React.FC = () => {
               </Form>
 
             </Col>
-            <Button className={"button-style button-style-more"} type="submit" onClick={handleFormSubmit}>
+            <Button className={"button-style button-style-more"} type="submit" onClick={handleFormSubmit} disabled={!user.trauma_draft}>
               Изменить поражение
             </Button>
-            <Button className={"button-style button-style-more"} onClick={handleFormTrauma}>
+            <div>{message}</div>
+            <Button className={"button-style button-style-more"} onClick={handleFormTrauma} disabled={!user.trauma_draft}>
               Сформировать поражение
             </Button>
-            <Button className={"button-style button-style-more"} onClick={handleDeleteTrauma}>
+            <Button className={"button-style button-style-more"} onClick={handleDeleteTrauma} disabled={!user.trauma_draft}>
               Удалить
             </Button>
           </Row>

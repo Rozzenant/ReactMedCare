@@ -4,30 +4,8 @@ import axios from 'axios';
 import {useDispatch} from 'react-redux';
 import {login} from '../../store/UserSlice';
 import {Link, useNavigate} from 'react-router-dom';
-import {setTraumas} from '../../store/TraumaSlice';
-import {addToCart} from '../../store/CartSlice';
 
 
-/* eslint-disable  @typescript-eslint/no-explicit-any */
-const AxiosTraumas = async (token:any) => {
-  try {
-
-    const response = await axios.get(
-      'http://127.0.0.1:8000/trauma/',
-      {
-        withCredentials: true,
-        headers: {
-          'Authorization': `b'${token}'`,
-          'Content-Type': 'application/json',
-        },
-      }
-    );
-    return response.data;
-  } catch (error) {
-    console.error('Ошибка при получении данных поражений:', error);
-    throw error;
-  }
-};
 const Auth: React.FC = () => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -43,39 +21,17 @@ const Auth: React.FC = () => {
       });
       setMessage(`${JSON.stringify(response.data)}`);
       // console.log('Отправка данных на сервер:', { username, password });
-      console.log('Ответ сервера:', response.data);
       if (JSON.stringify(response.data).includes('Успешная авторизация')) {
         const datauser = {
           Is_Super: response.data.user.Is_Super,
           id: response.data.user.id,
           username: username,
-          password: password
+          password: password,
+          trauma_draft: null,
+          jwt: response.data.Authorization
         };
+        document.cookie = `jwt=${response.data.Authorization}; path=/`;
         dispatch(login(datauser));
-
-        document.cookie = `jwt=${response.data['jwt']}; path=/`;
-        const token = response.data['jwt']
-
-        const traumasData = await AxiosTraumas(response.data['jwt']);
-
-        const responseFirst_Aid = await axios.get(
-            `http://127.0.0.1:8000/first_aid/`,
-            {
-              withCredentials: true,
-              headers: {
-                'Authorization': `b'${token}'`,
-                'Content-Type': 'application/json',
-              },
-            }
-        );
-
-
-        const traumaDraft = responseFirst_Aid.data['trauma_draft'];
-        dispatch(setTraumas(traumasData));
-        if (traumaDraft) {
-          dispatch(addToCart(traumaDraft));
-        }
-
         navigate('/');
       }
 

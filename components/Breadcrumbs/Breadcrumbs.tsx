@@ -28,7 +28,7 @@ const Breadcrumbs: React.FC = () => {
           key={path}
           linkAs={Link}
           linkProps={{
-            state: {'object': location.state ? location.state.object : null}
+            state: {'first_aid': location.state ? location.state.first_aid : null}
           }}
         >
           {path}

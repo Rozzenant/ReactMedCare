@@ -1,13 +1,4 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-// interface ObjectInt {
-//     ID_Object: number;
-//     Name_Obj: string;
-//     Region: string;
-//     Year: number;
-//     Opener: string;
-//     Status: string;
-//     Image_Url: string;
-// }
 
 interface FirstAidInt {
   FirstAid_ID: number;
@@ -16,20 +7,6 @@ interface FirstAidInt {
   ImageURL: string;
   Price: number;
 }
-// interface Expedition {
-//   ID_Expedition: number;
-//   Name_Exp: string;
-//   DateStart: string;
-//   DateEnd: string | null;
-//   DateApproving: string | null;
-//   Status: string;
-//   Leader: string;
-//   ModeratorId: number | null;
-//   CreatorId: number | null;
-//   Describe: string | null;
-//   Objects: ObjectInt[];
-//   Archive: string | null;
-// }
 
 interface TraumaInt {
   TraumaID: number;

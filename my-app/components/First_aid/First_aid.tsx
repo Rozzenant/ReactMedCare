@@ -4,12 +4,10 @@ import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
 import { useNavigate, useLocation } from "react-router-dom";
 import defaultImg from "../../src/assets/defaultImg.png";
-import {useDispatch, useSelector} from "react-redux";
+import {useSelector, useDispatch} from "react-redux";
 import {RootState} from "../../store/store.ts";
 import axios from "axios";
-import {setTraumas} from "../../store/TraumaSlice.ts";
-import {addToCart} from "../../store/CartSlice.ts";
-// import traumas from "../Traumas/traumas.tsx";
+import {change_status_trauma_draft, set_trauma_draft_id} from "../../store/UserSlice.ts";
 
 interface First_aid_Props {
   first_aid: First_aid_Inter;
@@ -20,80 +18,39 @@ const First_aid: React.FC<First_aid_Props> = ({ first_aid }) => {
   const location = useLocation();
   const user = useSelector((state: RootState) => state.user);
   const dispatch = useDispatch();
+
   const addToTrauma = async () => {
-    let traumasData;
-    let traumaIN;
     try {
-      const jwtTokenCookie = document.cookie.split('; ').find(row => row.startsWith('jwt='));
-
-      if (jwtTokenCookie) {
-        const token = jwtTokenCookie.split('=')[1];
-
-        // const traumasData: TraumaInt[] = Array.isArray(responseFirst_aid.data) ? responseFirst_aid.data : [];
-        // const traumaIN = traumasData.find(trauma => trauma.Status === 'Draft');
-
-        const responseFirst_aid_to_Trauma = await axios.put(
-            `http://127.0.0.1:8000/first_aid/add_to_trauma/${first_aid.First_aid_ID}`,
-            null,
-            {
+      const token = user.jwt;
+      const put_response = await axios.put(
+          `http://127.0.0.1:8000/first_aid/add_to_trauma/${first_aid.First_aid_ID}`,
+          null,
+          {
               withCredentials: true,
               headers: {
-                'Authorization': `b'${token}'`,
-                'Content-Type': 'application/json',
-              },
-            }
-        );
-
-        if (responseFirst_aid_to_Trauma.status === 200) {
-          traumasData = responseFirst_aid_to_Trauma.data;
-        }
-
-        const responseFirst_aid = await axios.get(
-            'http://127.0.0.1:8000/first_aid/',
-            {
-              withCredentials: true,
-              headers: {
-                'Authorization': `b'${token}'`,
-                'Content-Type': 'application/json',
-              },
-            }
-        );
-        if (responseFirst_aid.status == 200) {
-          traumaIN = responseFirst_aid.data['trauma_draft'];
-        } else {
-          traumaIN = null;
-        }
-
-        if (traumaIN !== null) {
-
-
-          const responseTrauma = await axios.get(
-              `http://127.0.0.1:8000/trauma/${traumaIN}`,
-              {
-                withCredentials: true,
-                headers: {
                   'Authorization': `b'${token}'`,
                   'Content-Type': 'application/json',
-                },
-              }
-          );
-
-
-          if (responseTrauma.status === 200) {
-            traumasData = responseTrauma.data;
-            dispatch(setTraumas(traumasData));
-            dispatch(addToCart(traumasData));
+              },
           }
+      );
+      if ((put_response.status === 200) && !(user.trauma_draft)) {
+        dispatch(change_status_trauma_draft());
+        const response_trauma_draft = await axios.get("http://127.0.0.1:8000/first_aid/",
+            {
+                withCredentials: true,
+                headers: {
+                    'Authorization': `${token}`,
+                    'Content-Type': 'application/json',
+                }
+            });
 
+        if (response_trauma_draft.status === 200){
+            dispatch(set_trauma_draft_id({'trauma_draft_id': response_trauma_draft.data['trauma_draft']}))
+            // console.log(user.trauma_draft_id)
         }
 
-        // if (traumaIN) {
-        //   dispatch(addToCart(traumaIN));
-        // }
-
-      } else {
-        console.error('Токен JWT отсутствует в куки.');
       }
+
 
     } catch (error) {
       console.error('Ошибка при выполнении запроса:', error);
@@ -103,7 +60,7 @@ const First_aid: React.FC<First_aid_Props> = ({ first_aid }) => {
 
   const ButtonClick = () => {
     navigate(`/${first_aid.First_aid_ID}`, {
-      state: {object: first_aid, returnTo: location.pathname},
+      state: {first_aid: first_aid, returnTo: location.pathname},
     });
   };
 

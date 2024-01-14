@@ -15,7 +15,7 @@ const First_aid: React.FC<First_aid_Props> = ({ first_aid }) => {
 
   const ButtonClick = () => {
     navigate(`/${first_aid.First_aid_ID}`, {
-      state: { object: first_aid, returnTo: location.pathname },
+      state: { first_aid: first_aid, returnTo: location.pathname },
     });
   };
 

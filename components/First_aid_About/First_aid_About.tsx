@@ -1,12 +1,10 @@
-// import React, {useEffect} from "react";
+
 import { Container, Card, ListGroup } from "react-bootstrap";
 import NavigationBar from "../Navbar/Navbar";
 import {useLocation, useParams} from "react-router-dom";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs.tsx";
 import React, {useEffect, useState} from "react";
-// import {response} from "express";
 import { First_aid_Inter } from "../../Models/First_aid.tsx";
-// import {mockObjects} from "../../src/assets/mockObject.ts";
 
 
 const AboutFirst_aid: React.FC = () => {
@@ -25,7 +23,7 @@ const AboutFirst_aid: React.FC = () => {
           console.error(error);
         });
     } else {
-      setFirstAidAbout(location.state.object);
+      setFirstAidAbout(location.state.data);
     }
   }, [id, location.state]);
 

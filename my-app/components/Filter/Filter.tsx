@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import { First_aid_Inter } from "../../Models/First_aid.tsx";
 import Button from "react-bootstrap/Button";
 import axios from "axios";
-import Cart from "../Cart/cart"
-import {useSelector} from "react-redux";
+import {useDispatch, useSelector} from "react-redux";
+import {setParamsSearch, setSearch, setFrom, setTo} from "../../store/Filter_first_aid_Slice.ts";
 import {RootState} from "../../store/store.ts";
 
 interface FilterProps {
@@ -18,7 +18,9 @@ const First_aid_Filter: React.FC<FilterProps> = ({
   const [filter, setFilter] = useState<string>("");
   const [priceFrom, setPriceFrom] = useState<string>("");
   const [priceTo, setPriceTo] = useState<string>("");
-  const user = useSelector((state: RootState) => state.user);
+  const dispatch = useDispatch();
+  const search_params = useSelector((state: RootState) => state.filterFirst_Aid)
+  // const user = useSelector((state: RootState) => state.user);
 
 
   // const FilterChange = () => {
@@ -32,14 +34,17 @@ const First_aid_Filter: React.FC<FilterProps> = ({
   // };
 
   const Filter = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setSearch(event.target.value))
     setFilter(event.target.value);
   };
 
   const PriceFrom = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setFrom(event.target.value))
     setPriceFrom(event.target.value);
   };
 
   const PriceTo = (event: React.ChangeEvent<HTMLInputElement>) => {
+    dispatch(setTo(event.target.value))
     setPriceTo(event.target.value);
   };
 
@@ -52,8 +57,11 @@ const First_aid_Filter: React.FC<FilterProps> = ({
           to: priceTo,
         },
       });
-      // Обработка ответа, например, передача данных на обновление
+      dispatch(setParamsSearch(
+          {"search": filter, "from": priceFrom, "to": priceTo}
+      ))
       onFilterChange(response.data['first_aids']);
+      
     } catch (error) {
       console.error("Ошибка при выполнении запроса:", error);
     }
@@ -63,6 +71,9 @@ const First_aid_Filter: React.FC<FilterProps> = ({
     setFilter("");
     setPriceFrom("");
     setPriceTo("");
+    dispatch(setParamsSearch(
+          {"search": "", "from": "", "to": ""}
+      ))
     // FilterChange();
   };
 
@@ -75,21 +86,21 @@ const First_aid_Filter: React.FC<FilterProps> = ({
       <input
         type="text"
         placeholder="Поиск по названию"
-        value={filter}
+        value={search_params.search}
         onChange={Filter}
       />
       <input
         type="number"
         placeholder="От"
         id="priceFrom"
-        value={priceFrom}
+        value={search_params.from}
         onChange={PriceFrom}
       />
       <input
         type="number"
         placeholder="До"
         id="priceTo"
-        value={priceTo}
+        value={search_params.to}
         onChange={PriceTo}
       />
       <Button
@@ -104,14 +115,6 @@ const First_aid_Filter: React.FC<FilterProps> = ({
         >
           Очистить
         </Button>
-      {user.id != -1? (
-          <Cart/>
-      ):(
-          <></>
-      )}
-
-
-
     </div>
   );
 };

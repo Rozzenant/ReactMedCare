@@ -1,12 +1,53 @@
-import React from 'react';
-import { useSelector } from 'react-redux';
-import { Container, Table, Alert } from 'react-bootstrap';
-import { RootState } from '../../store/store';
+import React, {useEffect} from 'react';
+import {useDispatch, useSelector} from 'react-redux';
+import {Alert, Container, Table} from 'react-bootstrap';
+import {RootState} from '../../store/store';
 import NavigationBar from "../Navbar/Navbar";
-import { Link } from 'react-router-dom';
+import {Link} from 'react-router-dom';
+import {removeTraumas, setTraumas} from '../../store/TraumaSlice.ts'
+import axios from "axios";
+
 const TraumaHistory: React.FC = () => {
-  const userTraumas = useSelector((state: RootState) => state.traumas.traumas);
-  console.log(userTraumas)
+    const user = useSelector((state: RootState) => state.user)
+    const userTraumas = useSelector((state: RootState) => state.traumas)
+    const dispatch = useDispatch();
+
+    function formatDateTime(DateTime: string | undefined | null) {
+      if (!DateTime) {
+        return '-';
+      }
+
+      return new Date(DateTime).toLocaleString('ru-RU', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+      });
+}
+
+
+    useEffect(() => {
+    axios.get(
+        "http://127.0.0.1:8000/trauma/",
+        {
+              withCredentials: true,
+              headers: {
+                  'Authorization': `${user.jwt}`,
+                  'Content-Type': 'application/json',
+              },
+          }
+    )
+      .then((response) => {
+        dispatch(removeTraumas())
+        dispatch(setTraumas(response.data))
+      })
+      .catch((error) => {
+        console.error(error);
+      });
+}, []);
+
 
   return (
     <>
@@ -14,7 +55,7 @@ const TraumaHistory: React.FC = () => {
       <div>
         <Container fluid style={{ minHeight: '100vh' }} className="text-center">
           <h1>История Поражений</h1>
-          {userTraumas.length > 0 ? (
+          {userTraumas.traumas.length > 0 ? (
             <Table striped bordered hover responsive variant="light">
               <thead>
                 <tr>
@@ -29,7 +70,7 @@ const TraumaHistory: React.FC = () => {
                 </tr>
               </thead>
               <tbody>
-                {userTraumas.map((trauma) => (
+                {userTraumas.traumas.slice().reverse().map((trauma) => (
                   <tr key={trauma.Trauma_ID}>
                     <td>
                       <Link to={`/trauma/${trauma.Trauma_ID}`}>
@@ -37,9 +78,9 @@ const TraumaHistory: React.FC = () => {
                       </Link>
                     </td>
                     <td>{trauma.Trauma_Name || 'Не названо'}</td>
-                    <td>{trauma.Date_Creation}</td>
-                    <td>{trauma.Date_End || '-'}</td>
-                    <td>{trauma.Date_Approving || '-'}</td>
+                    <td>{formatDateTime(trauma.Date_Creation)}</td>
+                    <td>{formatDateTime(trauma.Date_End) || '-'}</td>
+                    <td>{formatDateTime(trauma.Date_Approving) || '-'}</td>
                     <td>{trauma.Status}</td>
                     <td>{trauma.Confirmation_Doctor}</td>
 

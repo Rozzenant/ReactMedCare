@@ -8,16 +8,15 @@ import {removeTraumas, setTraumas} from '../../store/TraumaSlice.ts'
 import axios from "axios";
 
 const TraumaHistory: React.FC = () => {
-    const user = useSelector((state: RootState) => state.user)
-    const userTraumas = useSelector((state: RootState) => state.traumas)
+    const user = useSelector((state: RootState) => state.user);
+    const userTraumas = useSelector((state: RootState) => state.traumas);
     const dispatch = useDispatch();
 
     function formatDateTime(DateTime: string | undefined | null) {
-      if (!DateTime) {
-        return '-';
-      }
-
-      return new Date(DateTime).toLocaleString('ru-RU', {
+        if (!DateTime) {
+            return '-';
+        }
+        return new Date(DateTime).toLocaleString('ru-RU', {
           year: 'numeric',
           month: '2-digit',
           day: '2-digit',
@@ -25,7 +24,32 @@ const TraumaHistory: React.FC = () => {
           minute: '2-digit',
           second: '2-digit',
       });
+    }
+
+    function statusMap(status: keyof typeof statusMap){
+        const StatusMap = {
+        Draft: 'Черновик',
+        Formed: 'Сформировано',
+        Completed: 'Завершёно',
+        Cancelled: 'Отклонено',
+        Deleted: 'Удалёно',
+        };
+
+        return StatusMap[status] || status;
+    }
+
+    function doctorStatusMap(status: keyof typeof doctorStatusMap) {
+        const DoctorStatusMap = {
+        Pending: 'Ожидается',
+        Confirmed: 'Подтверждено',
+        Rejected: 'Отклонено',
+  };
+
+  return DoctorStatusMap[status] || status;
 }
+
+
+
 
 
     useEffect(() => {
@@ -60,10 +84,10 @@ const TraumaHistory: React.FC = () => {
               <thead>
                 <tr>
                   <th>Номер</th>
-                  <th>Наименование</th>
-                  <th>Дата начала</th>
-                  <th>Дата окончания</th>
-                  <th>Дата утверждения</th>
+                  <th>Поражение</th>
+                  <th>Создано</th>
+                  <th>Завершено</th>
+                  <th>Утверждено</th>
                   <th>Статус</th>
                   <th>Подтверждение врача</th>
 
@@ -81,8 +105,8 @@ const TraumaHistory: React.FC = () => {
                     <td>{formatDateTime(trauma.Date_Creation)}</td>
                     <td>{formatDateTime(trauma.Date_End) || '-'}</td>
                     <td>{formatDateTime(trauma.Date_Approving) || '-'}</td>
-                    <td>{trauma.Status}</td>
-                    <td>{trauma.Confirmation_Doctor}</td>
+                    <td>{statusMap(trauma.Status as keyof typeof statusMap)}</td>
+                    <td>{doctorStatusMap(trauma.Confirmation_Doctor as keyof typeof doctorStatusMap)}</td>
 
                   </tr>
                 ))}

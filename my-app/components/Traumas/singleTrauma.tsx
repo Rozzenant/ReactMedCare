@@ -13,6 +13,42 @@ const SingleTrauma: React.FC = () => {
     return state.traumas.traumas.find(trauma => trauma.Trauma_ID.toString() === id);
   });
 
+  function statusMap(status: keyof typeof statusMap){
+        const StatusMap = {
+        Draft: 'Черновик',
+        Formed: 'Сформировано',
+        Completed: 'Завершёно',
+        Cancelled: 'Отклонено',
+        Deleted: 'Удалёно',
+        };
+
+        return StatusMap[status] || status;
+    }
+
+  function formatDateTime(DateTime: string | undefined | null) {
+        if (!DateTime) {
+            return '-';
+        }
+        return new Date(DateTime).toLocaleString('ru-RU', {
+          year: 'numeric',
+          month: '2-digit',
+          day: '2-digit',
+          hour: '2-digit',
+          minute: '2-digit',
+          second: '2-digit',
+      });
+    }
+
+    function doctorStatusMap(status: keyof typeof doctorStatusMap) {
+        const DoctorStatusMap = {
+        Pending: 'Ожидается',
+        Confirmed: 'Подтверждено',
+        Rejected: 'Отклонено',
+  };
+
+  return DoctorStatusMap[status] || status;
+}
+
 
 
 
@@ -24,14 +60,14 @@ const SingleTrauma: React.FC = () => {
           {trauma && (
             <Card>
               <Card.Body>
-                <Card.Title>{trauma.Trauma_Name || 'Нет наименования'}</Card.Title>
+                <Card.Title>{trauma.Trauma_Name || 'Нет названия поражения'}</Card.Title>
                 <Card.Subtitle className="mb-2 text-muted">ID: {trauma.Trauma_ID}</Card.Subtitle>
                 <Card.Text>
-                  <strong>Confirmation_Doctor:</strong> {trauma.Confirmation_Doctor || '-'}<br />
-                  <strong>Date Creation:</strong> {trauma.Date_Creation || '-'}<br />
-                  <strong>Date Approving:</strong> {trauma.Date_Approving || '-'}<br />
-                  <strong>Date End:</strong> {trauma.Date_End || '-'}<br />
-                  <strong>Status:</strong> {trauma.Status}<br />
+                  <strong>Словесное подтверждение врача: </strong> {doctorStatusMap(trauma.Confirmation_Doctor as keyof typeof doctorStatusMap) || '-'}<br />
+                  <strong>Создано: </strong> {formatDateTime(trauma.Date_Creation) || '-'}<br />
+                  <strong>Утверждено: </strong> {formatDateTime(trauma.Date_Approving) || '-'}<br />
+                  <strong>Завершено: </strong> {formatDateTime(trauma.Date_End) || '-'}<br />
+                  <strong>Статус: </strong>{statusMap(trauma.Status as keyof typeof statusMap)}<br />
                 </Card.Text>
               </Card.Body>
             </Card>

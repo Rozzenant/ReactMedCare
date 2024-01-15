@@ -1,23 +1,23 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 interface FirstAidInt {
   First_aid_ID: number;
-  First_aid_Name: string;
-  Description: string;
-  Image_URL: string;
-  Price: number;
+  First_aid_Name?: string;
+  Description?: string;
+  Image_URL?: string;
+  Price?: number;
 }
 
 interface TraumaInt {
   Trauma_ID: number;
-  Trauma_Name: string | null;
+  Trauma_Name?: string | null;
   Status: string;
   Date_Creation: string;
   Date_Approving?: string | null;
   Date_End?: string | null;
-  Moderator?: number | null;
-  Creator?: number | null;
-  First_aid_in_Trauma_List: FirstAidInt[];
-  Confirmation_Doctor: string;
+  Moderator_Name: string;
+  Creator_Name: string;
+  First_aid_in_Trauma_List?: FirstAidInt[];
+  Confirmation_Doctor?: string;
 }
 
 interface TraumasState {
@@ -37,7 +37,7 @@ const traumasSlice = createSlice({
     },
     removeTraumas(state){
       state.traumas = null;
-    }
+    },
 
   },
 });

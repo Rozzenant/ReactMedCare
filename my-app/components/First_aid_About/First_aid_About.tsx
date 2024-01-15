@@ -4,31 +4,41 @@ import {useLocation, useParams} from "react-router-dom";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs.tsx";
 import React, {useEffect, useState} from "react";
 import { First_aid_Inter } from "../../Models/First_aid.tsx";
+import axios from "axios";
+import {useSelector} from "react-redux";
+import {RootState} from "../../store/store.ts";
 
 
 const AboutFirst_aid: React.FC = () => {
   const location = useLocation();
   const { id } = useParams();
   const [first_aid_about, setFirstAidAbout] = useState<First_aid_Inter | null>(null);
-
-  useEffect(() => {
-    if (location.state === null) {
-      fetch(`http://127.0.0.1:8000/first_aid/${id}`)
-        .then(response => response.json())
-        .then(data => {
-          setFirstAidAbout(data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    } else {
-      setFirstAidAbout(location.state.first_aid);
-    }
-  }, [id, location.state]);
+  const user = useSelector((state: RootState) => state.user);
+useEffect(() => {
+  if (location.state === null) {
+    axios.get(
+        `http://127.0.0.1:8000/first_aid/${id}/`,
+        {
+            withCredentials: true,
+            headers: {
+              'Authorization': `${user.jwt}`,
+              'Content-Type': 'application/json',
+            },
+          }
+    )
+      .then(response => {
+        setFirstAidAbout(response.data);
+      })
+      .catch(error => {
+        console.error(error);
+      });
+  } else {
+    setFirstAidAbout(location.state.first_aid);
+  }
+}, [id, location.state]);
   if (!first_aid_about) {
     return <div>Загружаем...</div>;
   }
-  // console.log(first_aid_about)
   return (
     <>
       <NavigationBar />

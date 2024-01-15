@@ -9,6 +9,8 @@ import SingleTrauma from "../components/Traumas/singleTrauma.tsx";
 import Traumas from "../components/Traumas/traumas.tsx";
 import {useSelector} from "react-redux";
 import {RootState} from "../store/store.ts";
+import First_aids_table from "../components/First_aid/First_aid_list_mod.tsx";
+import FA_mod from "../components/First_aid_About/First_Aid_About_Mod.tsx";
 // import Traumas from '../components/Traumas/traumas.tsx'
 
 
@@ -20,6 +22,8 @@ function App() {
         <Routes>
             <Route path="" element={<First_aid_List />} />
             <Route path=":id" element={<First_aid_About />} />
+            <Route path="/first_aids/" element={<First_aids_table />} />
+            <Route path="/first_aids/:id" element={<FA_mod />} />
             <Route path="/auth/" element={<Auth />} />
             <Route path="/register/" element={<Register />} />
             <Route path="/trauma_history/" element={<TraumaHistory />} />

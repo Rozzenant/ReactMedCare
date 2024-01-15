@@ -9,24 +9,26 @@ interface FirstAidInt {
 }
 
 interface TraumaInt {
-  Trauma_ID?: number;
+  Trauma_ID: number;
   Trauma_Name?: string | null;
-  Status?: string;
-  Date_Creation?: string;
+  Status: string;
+  Date_Creation: string;
   Date_Approving?: string | null;
   Date_End?: string | null;
-  Moderator?: number | null;
-  Creator?: number | null;
+  Moderator_Name: string;
+  Creator_Name: string;
   First_aid_in_Trauma_List?: FirstAidInt[];
   Confirmation_Doctor?: string;
 }
 
 interface TraumasState {
   traumas: TraumaInt[];
+  flag: boolean;
 }
 
 const initialState: TraumasState = {
   traumas: [],
+  flag: false
 };
 
 const traumasSlice = createSlice({
@@ -36,9 +38,15 @@ const traumasSlice = createSlice({
     setTraumas(state, action: PayloadAction<TraumaInt[]>) {
       state.traumas = action.payload;
     },
+    removeTraumas(state){
+      state.traumas = <TraumaInt>[];
+    },
+    changeFlag(state){
+      state.flag = !state.flag
+    }
 
   },
 });
 
-export const { setTraumas} = traumasSlice.actions;
+export const { setTraumas, removeTraumas, changeFlag} = traumasSlice.actions;
 export default traumasSlice.reducer;

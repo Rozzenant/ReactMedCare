@@ -3,7 +3,6 @@ import { useSelector, useDispatch } from 'react-redux';
 import { RootState } from '../../store/store';
 import { Container, Row, Col, Form, Button } from 'react-bootstrap';
 import NavigationBar from "../Navbar/Navbar";
-// import { setTraumas } from '../../store/TraumaSlice';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import {change_status_trauma_draft, set_trauma_draft_id} from "../../store/UserSlice.ts";
@@ -28,7 +27,6 @@ interface TraumaInt {
   First_aid_in_Trauma_List?: FirstAidInt[];
   Confirmation_Doctor?: string;
 }
-
 
 const Traumas: React.FC = () => {
   // const userTrauma = useSelector((state: RootState) => state.traumas.traumas);
@@ -175,11 +173,28 @@ const Traumas: React.FC = () => {
           },
         }
       );
+        try {
+            await axios.post(
+            'http://localhost:8088/trauma',
+            {"id": user.trauma_draft_id},
+            {
+                withCredentials: false,
+                headers: {
+                    'Authorization': `${user.jwt}`,
+                    'Content-Type': 'application/json',
+                },
+                timeout: 500,
+            }
+        );
 
+        } catch (error) {
+            console.log("Сервер словесного подтверждения заявки недоступен ");
+        }
 
         handleFormSubmit();
         dispatch(set_trauma_draft_id({'trauma_draft_id': null}))
         dispatch(change_status_trauma_draft())
+
         navigate("/");
 
 
@@ -233,9 +248,9 @@ const Traumas: React.FC = () => {
               </Form>
 
             </Col>
-            <Button className={"button-style button-style-more"} type="submit" onClick={handleFormSubmit} disabled={!user.trauma_draft}>
-              Изменить поражение
-            </Button>
+            {/*<Button className={"button-style button-style-more"} type="submit" onClick={handleFormSubmit} disabled={!user.trauma_draft}>*/}
+            {/*  Изменить поражение*/}
+            {/*</Button>*/}
             <div>{message}</div>
             <Button className={"button-style button-style-more"} onClick={handleFormTrauma} disabled={!user.trauma_draft}>
               Сформировать поражение

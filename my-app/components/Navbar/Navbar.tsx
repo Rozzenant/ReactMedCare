@@ -7,12 +7,13 @@ import {Link, useNavigate} from 'react-router-dom';
 import Cart from "../Cart/cart.tsx";
 // import React from "react";
 
+
 const NavigationBar = () => {
     const user = useSelector((state: RootState) => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
     const handleLogout = async () => {
-//было удаление товара из корзины через диспатч
         try {
             if (user.trauma_draft) {
                 await axios.delete(
@@ -47,6 +48,7 @@ const NavigationBar = () => {
           console.error('Ошибка выхода:', error);
         }
       };
+
     return (
         <Navbar style={{border: "2px solid lightblue", }}>
             <Container>
@@ -79,6 +81,7 @@ const NavigationBar = () => {
                       )}
                       {user.Is_Super === true && (
                         <>
+                            <Nav.Link as={Link} to="/first_aids/">Таблица первых помощей</Nav.Link>
                             <Nav.Link as={Link} to="/trauma_history/">Все Поражения</Nav.Link>
                             <Nav.Link as={Link} to="/">Главная</Nav.Link>
                             <Nav.Link style={{cursor: 'default'}}>{user.username}</Nav.Link>

@@ -19,6 +19,7 @@ const First_aid_List: React.FC = () => {
   );
   const filter_fa = useSelector((state: RootState) => state.filterFirst_Aid)
   const dispatch = useDispatch();
+  const user = useSelector((state: RootState) => state.user);
 
 
 
@@ -30,7 +31,16 @@ const First_aid_List: React.FC = () => {
 
   useEffect(() => {
       if (filter_fa.filter_fa === null || filter_fa.filter_fa?.length === 0) {
-          axios.get("http://127.0.0.1:8000/first_aid/")
+          axios.get(
+              "http://127.0.0.1:8000/first_aid/",
+              {
+                  withCredentials: true,
+                  headers: {
+                      'Authorization': `${user.jwt}`,
+                      'Content-Type': 'application/json',
+                  },
+              }
+          )
               .then((response) => {
                   const data = response.data;
                   setFirst_aids(data["first_aids"]);

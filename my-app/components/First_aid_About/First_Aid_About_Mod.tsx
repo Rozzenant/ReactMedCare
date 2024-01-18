@@ -11,8 +11,18 @@ const FA_mod: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
-  // const [isCreating, setIsCreating] = useState<boolean>(false);
-  const [first_aid_Data, setFirst_aid_Data] = useState({
+
+  interface FirstAidInt {
+      First_aid_ID: number;
+      First_aid_Name: string;
+      Status: string;
+      Description: string;
+      Image_URL: string | File;
+      Price: string;
+    }
+
+
+  const [first_aid_Data, setFirst_aid_Data] = useState<FirstAidInt>({
     First_aid_ID: 0,
     First_aid_Name: '',
     Description: '',
@@ -106,7 +116,7 @@ const FA_mod: React.FC = () => {
         formData.append('Price', first_aid_Data.Price.toString());
         formData.append('Status', first_aid_Data.Status);
         if (first_aid_Data.Image_URL instanceof File) {
-          formData.append('Image_Url', first_aid_Data.Image_URL);
+          formData.append('Image_URL', first_aid_Data.Image_URL);
         }
 
         const responseChange = await axios.put(
@@ -134,10 +144,7 @@ const FA_mod: React.FC = () => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
       const selectedFile = e.target.files[0];
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
         setFirst_aid_Data((prevData) => ({ ...prevData, Image_URL: selectedFile }));
-        console.log(first_aid_Data.Image_URL)
     }
   };
 
@@ -182,26 +189,26 @@ const FA_mod: React.FC = () => {
         <Form>
           <Row className="justify-content-center">
             <Col md={6}>
-              <Form.Group controlId="formName" className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Label>Название первой помощи</Form.Label>
                 <Form.Control type="text" value={first_aid_Data.First_aid_Name} onChange={handleNameChange} />
               </Form.Group>
-              <Form.Group controlId="formRegion" className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Label>Описание</Form.Label>
                 <Form.Control type="text" value={first_aid_Data.Description} onChange={handleDescriptionChange} />
               </Form.Group>
-              <Form.Group controlId="formYear" className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Label>Цена</Form.Label>
                 <Form.Control type="number" value={first_aid_Data.Price} onChange={handlePriceChange} />
               </Form.Group>
-              <Form.Group controlId="formStatus" className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Label>Статус</Form.Label>
                 <Form.Control as="select" value={first_aid_Data.Status} onChange={handleStatusChange}>
                   <option value="1">Действует</option>
                   <option value="0">Удален</option>
                 </Form.Control>
               </Form.Group>
-              <Form.Group controlId="formImage" className="mb-3">
+              <Form.Group className="mb-3">
                 <Form.Label>Загрузить файл</Form.Label>
                 <Form.Control type="file" onChange={handleFileChange} />
               </Form.Group>
@@ -217,9 +224,6 @@ const FA_mod: React.FC = () => {
                 <Button className="col-auto button-style" onClick={handleEditFirstAid}>
                   Редактировать
                 </Button>
-                {/* <Button variant="dark" className="col-auto" onClick={handleDelete}>
-                  Удалить
-                </Button> */}
               </>
             )}
           </Row>

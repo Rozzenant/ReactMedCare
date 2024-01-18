@@ -42,7 +42,7 @@ const AxiosTraumas = async (token:unknown) => {
         },
       }
     );
-    console.log('traumas:',response.data);
+    // console.log('traumas:',response.data);
     return response.data;
   } catch (error) {
     console.error('Ошибка при получении данных поражений:', error);
@@ -63,8 +63,7 @@ const Auth: React.FC = () => {
         password: password
       });
       setMessage(`${JSON.stringify(response.data)}`);
-      // console.log('Отправка данных на сервер:', { username, password });
-      console.log('Ответ сервера:', response.data);
+      // console.log('Ответ сервера:', response.data);
       if (JSON.stringify(response.data).includes('Успешная авторизация')) {
         const datauser={
           Is_Super: response.data.user.Is_Super,
@@ -73,7 +72,7 @@ const Auth: React.FC = () => {
           password: password
         };
         dispatch(login(datauser));
-        console.log(response.data)
+        // console.log(response.data)
         document.cookie = `jwt=${response.data.Authorization}; path=/`;
 
         const traumasData: TraumaInt[] = await AxiosTraumas(response.data.Authorization);
@@ -82,7 +81,7 @@ const Auth: React.FC = () => {
         const traumaIn = traumasData.find(trauma => trauma.Status === 'Draft');
         dispatch(setTraumas(traumasData));
         if (traumaIn) {
-          console.log('cart:',traumaIn);
+          // console.log('cart:',traumaIn);
           dispatch(addToCart(traumaIn));
         }
 

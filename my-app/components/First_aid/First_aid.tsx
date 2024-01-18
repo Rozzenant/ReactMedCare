@@ -79,10 +79,15 @@ const First_aid: React.FC<First_aid_Props> = ({ first_aid }) => {
             src={first_aid.Image_URL || defaultImg}
         />
         <Card.Body>
-          <Card.Title style={{height: "3rem"}}>
+          <Card.Title className="text-center" style={{height: "3rem"}}>
             {first_aid.First_aid_Name}
           </Card.Title>
-          <Card.Text>{first_aid.Price} $</Card.Text>
+            {first_aid.Price === 0 ? (
+                <Card.Text className="text-center">Бесплатно</Card.Text>
+            ) : (
+                <Card.Text className="text-center">{first_aid.Price} $</Card.Text>
+            )}
+          {/*<Card.Text>{first_aid.Price === 0 ? ("Бесплатно") : (first_aid.Price )}</Card.Text>*/}
           {user.id != -1 && (
               <Button className="button-style button-style-more" onClick={addToTrauma}>
                 Добавить в поражение

@@ -5,6 +5,7 @@ import axios from 'axios';
 import {logout, set_trauma_draft_id} from '../../store/UserSlice';
 import {Link, useNavigate} from 'react-router-dom';
 import Cart from "../Cart/cart.tsx";
+import Cookies from "js-cookie";
 // import React from "react";
 
 
@@ -40,6 +41,7 @@ const NavigationBar = () => {
                 }
             );
 
+            Cookies.remove('jwt');
             dispatch(logout());
             dispatch(set_trauma_draft_id({"trauma_draft_id": null}))
             navigate('/');

@@ -18,7 +18,7 @@ const First_aids_table: React.FC = () => {
       First_aid_Name: string;
       Status: string;
       Description?: string;
-      Image_URL: string;
+      Image_URL: string | File;
       Price: number;
     }
 
@@ -63,7 +63,7 @@ const First_aids_table: React.FC = () => {
           }
         );
       if (response.status === 200) {
-          console.log(response.data['first_aids'])
+          // console.log(response.data['first_aids'])
         setFirstAids(response.data['first_aids']);
       } else {
         throw new Error('Failed to get data from the server');

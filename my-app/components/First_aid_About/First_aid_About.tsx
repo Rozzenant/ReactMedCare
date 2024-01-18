@@ -65,9 +65,16 @@ useEffect(() => {
             <Card.Text>{first_aid_about.Description}</Card.Text>
           </Card.Body>
           <ListGroup className="list-group-flush">
-            <ListGroup.Item style={{ textAlign: "center", fontSize: "1.25em" }}>
-              {first_aid_about.Price}$
-            </ListGroup.Item>
+                {first_aid_about.Price === 0 ? (
+                    <ListGroup.Item style={{ textAlign: "center", fontSize: "1.25em" }}>
+                        Бесплатно
+                   </ListGroup.Item>
+                ):(
+                    <ListGroup.Item style={{ textAlign: "center", fontSize: "1.25em" }}>
+                        {first_aid_about.Price} $
+                   </ListGroup.Item>
+                )}
+
           </ListGroup>
         </Card>
       </Container>

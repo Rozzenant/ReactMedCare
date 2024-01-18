@@ -57,7 +57,11 @@ const userSlice = createSlice({
 
     set_trauma_draft_id(state, action: PayloadAction<{trauma_draft_id: string | null}>){
         state.trauma_draft_id = action.payload.trauma_draft_id;
-    }
+    },
+    set_jwt(state, action: PayloadAction<{jwt: string}>){
+        state.jwt = action.payload.jwt;
+        // console.log(state.jwt)
+}
 
 
   },
@@ -66,5 +70,6 @@ const userSlice = createSlice({
 export const { login,
             logout,
             change_status_trauma_draft,
-            set_trauma_draft_id} = userSlice.actions;
+            set_trauma_draft_id,
+            set_jwt} = userSlice.actions;
 export default userSlice.reducer;

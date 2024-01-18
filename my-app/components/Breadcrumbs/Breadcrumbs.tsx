@@ -8,6 +8,7 @@ const Breadcrumbs: React.FC = () => {
 
   useEffect(() => {
     const pathNames = location.pathname.split('/').filter((name) => name !== '');
+    console.log(location.pathname)
     setCurrentPath(pathNames);
   }, [location.pathname]);
 

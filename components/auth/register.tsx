@@ -13,7 +13,7 @@ const Register: React.FC = () => {
         password: password
       });
 
-      console.log('Успешная регистрация:', response.data);
+      // console.log('Успешная регистрация:', response.data);
       setMessage('Регистрация прошла успешно!');
       setUsername('');
       setPassword('');

@@ -20,18 +20,6 @@ const First_aid_Filter: React.FC<FilterProps> = ({
   const [priceTo, setPriceTo] = useState<string>("");
   const dispatch = useDispatch();
   const search_params = useSelector((state: RootState) => state.filterFirst_Aid)
-  // const user = useSelector((state: RootState) => state.user);
-
-
-  // const FilterChange = () => {
-  //   const filteredFirst_aid = first_aids.filter(
-  //     (first_aid) =>
-  //       first_aid.First_aid_Name.toLowerCase().includes(filter.toLowerCase()) &&
-  //       (!priceFrom || first_aid.Price >= parseFloat(priceFrom)) &&
-  //       (!priceTo || first_aid.Price <= parseFloat(priceTo))
-  //   );
-  //   onFilterChange(filteredFirst_aid);
-  // };
 
   const Filter = (event: React.ChangeEvent<HTMLInputElement>) => {
     dispatch(setSearch(event.target.value))

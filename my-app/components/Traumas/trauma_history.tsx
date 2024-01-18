@@ -4,7 +4,11 @@ import {Alert, Container, Table, Form, Button} from 'react-bootstrap';
 import {RootState} from '../../store/store';
 import NavigationBar from "../Navbar/Navbar";
 import {Link} from 'react-router-dom';
-import {removeTraumas, setTraumas} from '../../store/TraumaSlice.ts'
+import {
+    setTraumas,
+    setFromDate, setToDate,
+    setSearch, setStatus, removeParams
+} from "../../store/TraumaSlice.ts"
 import axios from "axios";
 import TraumaButton from "./TraumaAction.tsx";
 
@@ -12,47 +16,23 @@ const TraumaHistory: React.FC = () => {
     const user = useSelector((state: RootState) => state.user);
     const userTraumas = useSelector((state: RootState) => state.traumas);
     const dispatch = useDispatch();
-    const [filteredTraumas, setFilteredTraumas] = useState(userTraumas.traumas);
-    const [search, setSearch] = useState('');
-    const [dataFrom, setDataFrom] = useState('');
-    const [dataTo, setDataTo] = useState('');
-    const [selectedStatus, setSelectedStatus] = useState('')
     const [flag, setFlag] = useState(false)
     const [countFlag, setCountFlag] = useState(0)
 
-    // interface FirstAidInt {
-    //   First_aid_ID: number;
-    //   First_aid_Name?: string;
-    //   Description?: string;
-    //   Image_URL?: string;
-    //   Price?: number;
-    // }
-
-    // interface TraumaInt {
-    //   Trauma_ID?: number;
-    //   Trauma_Name?: string | null;
-    //   Status?: string;
-    //   Date_Creation?: string;
-    //   Date_Approving?: string | null;
-    //   Date_End?: string | null;
-    //   Moderator_Name?: number | null;
-    //   Creator_Name: string;
-    //   First_aid_in_Trauma_List?: FirstAidInt[];
-    //   Confirmation_Doctor?: string;
-    // }
 
     const filterTraumas = (search: string) => {
-        setSearch(search)
+        dispatch(setSearch(search))
         if (!(userTraumas.traumas['detail'] === undefined )){
             const filteredData = userTraumas.traumas.filter(
                 (trauma) => {
                     return trauma.Creator_Name.toLowerCase().includes(search.toLowerCase());
                 }
         );
-        setFilteredTraumas(filteredData);
+        dispatch(setTraumas(filteredData));
         }
 
   };
+
 
     function formatDateTime(DateTime: string | undefined | null) {
         if (!DateTime) {
@@ -107,33 +87,15 @@ const statusOptions = [
               'Content-Type': 'application/json',
             },
             params: {
-              dataFrom: dataFrom,
-              dataTo: dataTo,
-              Status: selectedStatus
+              dataFrom: userTraumas.from,
+              dataTo: userTraumas.to,
+              Status: userTraumas.status === "Все статусы" ? '' : userTraumas.status
             },
           }
         );
-        dispatch(removeTraumas());
         if (response.status === 200) {
-            // const filteredData = response.data.filter(
-            //     (trauma: TraumaInt) => {
-            //         return trauma.Creator_Name.toLowerCase().includes(search.toLowerCase())
-            //     }
-            //
-            //
-            // )
-
             dispatch(setTraumas(response.data));
-            setFilteredTraumas(response.data);
         }
-
-        // response.data.forEach((trauma: TraumaInt) => {
-        // if (trauma.Creator_Name.toLowerCase().includes(search.toLowerCase())) {
-        //   filteredTraumas.push(trauma);
-        // }
-        //
-        // dispatch(setTraumas(response.data));
-        // });
 
       } catch (error) {
         console.error(error);
@@ -158,18 +120,11 @@ const statusOptions = [
           <h1 className="text-center">История Поражений</h1>
             {user.Is_Super ? (
                 <Container style={{"width": "100%"}}>
-                  {/*<label style={{"marginRight": "10px"}} htmlFor="creatorSearch">Поиск по пользователю </label>*/}
-                  {/*<input*/}
-                  {/*  type="text"*/}
-                  {/*  id="creatorSearch"*/}
-                  {/*  value={search}*/}
-                  {/*  onChange={(e) => filterTraumas(e.target.value)}*/}
-                  {/*/>*/}
                     <Form.Group style={{"display": "flex", justifyContent: "center", alignItems: "center", gap: "15px", marginBottom: "10px"}} >
                       <Form.Label>Поиск по пользователю </Form.Label>
                       <Form.Control
                         className="text-center"
-                        value={search}
+                        value={userTraumas.search}
                         onChange={(e) => filterTraumas(e.target.value)}
                         style={{"width": ""}}
                       />
@@ -178,23 +133,26 @@ const statusOptions = [
                       <Form.Control
                         className="text-center"
                         type="datetime-local"
-                        value={dataFrom}
-                        onChange={(e) => {setDataFrom(e.target.value)}}
+                        value={userTraumas.from}
+                        onChange={(e) => {
+                            dispatch(setFromDate(e.target.value))}}
                         style={{"width": "800px"}}
                       />
                         <Form.Label>До</Form.Label>
                         <Form.Control
                         className="text-center"
                         type="datetime-local"
-                        value={dataTo}
-                        onChange={(e) => {setDataTo(e.target.value)}}
+                        value={userTraumas.to}
+                        onChange={(e) => {
+                            dispatch(setToDate(e.target.value))}}
                         style={{"width": "800px"}}
                       />
 
                             <Form.Control
                                 as="select"
-                                value={selectedStatus}
-                                onChange={(e) => setSelectedStatus(e.target.value)}
+                                value={userTraumas.status}
+                                onChange={(e) => {
+                                dispatch(setStatus(e.target.value))}}
                             >
                                 <option value="">Все статусы</option>
                                 {statusOptions.map((option) => (
@@ -206,7 +164,7 @@ const statusOptions = [
 
                     <Button className="button-style"
                             onClick={() => {
-                                filterTraumas(search);
+                                filterTraumas(userTraumas.search);
                                 setFlag(!flag);
                                 setCountFlag(countFlag + 1);
                             }
@@ -215,11 +173,8 @@ const statusOptions = [
                     </Button>
                     <Button className="button-style"
                             onClick={() => {
-                                setSearch('');
-                                setDataFrom('');
-                                setDataTo('');
-                                setSelectedStatus('');
-                                // setFlag(!flag)
+                                dispatch(removeParams());
+                                setFlag(!flag)
                             }}>
                         Очистить
                     </Button>
@@ -230,7 +185,7 @@ const statusOptions = [
                       ) : (
                           <></>
                       )}
-          {filteredTraumas.length > 0 ? (
+          {userTraumas.traumas && userTraumas.traumas.filter(trauma => trauma.Creator_Name.toLowerCase().includes(userTraumas.search.toLowerCase())).length > 0 ? (
             <Table striped bordered hover responsive variant="light">
               <thead>
                 <tr>
@@ -252,7 +207,7 @@ const statusOptions = [
                 </tr>
               </thead>
               <tbody>
-                {filteredTraumas.filter(trauma => trauma.Creator_Name.toLowerCase().includes(search.toLowerCase())).slice().reverse().map((trauma) => (
+                {userTraumas.traumas.filter(trauma => trauma.Creator_Name.toLowerCase().includes(userTraumas.search.toLowerCase())).slice().reverse().map((trauma) => (
                   <tr key={trauma.Trauma_ID}>
                     <td>
                       <Link to={`/trauma/${trauma.Trauma_ID}`}>

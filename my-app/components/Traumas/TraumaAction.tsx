@@ -22,7 +22,7 @@ await axios.put(`http://127.0.0.1:8000/trauma/${id}/status_to_end/`,
     }
 )
     .then(response => {
-        console.log("Статус", response.status);
+        // console.log("Статус", response.status);
         setButflag(false);
     })
     .catch(error => {

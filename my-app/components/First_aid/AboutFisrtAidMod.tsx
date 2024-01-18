@@ -10,7 +10,7 @@ const AboutfirstAid: React.FC = () => {
     const location = useLocation();
     const first_aid = location.state
 
-    console.log(location.state)
+    // console.log(location.state)
     return (
             <>
       <NavigationBar />

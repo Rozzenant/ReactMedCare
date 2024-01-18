@@ -5,32 +5,31 @@ import {useLocation, useParams} from "react-router-dom";
 import Breadcrumbs from "../Breadcrumbs/Breadcrumbs.tsx";
 import React, {useEffect, useState} from "react";
 import { First_aid_Inter } from "../../Models/First_aid.tsx";
+import axios from "axios";
 
 
 const AboutFirst_aid: React.FC = () => {
   const location = useLocation();
   const { id } = useParams();
   const [first_aid_about, setFirstAidAbout] = useState<First_aid_Inter | null>(null);
-
-  useEffect(() => {
-    if (location.state === null) {
-      fetch(`http://127.0.0.1:8000/first_aid/${id}`)
-        .then(response => response.json())
-        .then(data => {
-          setFirstAidAbout(data);
-        })
-        .catch(error => {
-          console.error(error);
-        });
-    } else {
-      setFirstAidAbout(location.state.data);
-    }
-  }, [id, location.state]);
+    useEffect(() => {
+      if (location.state === null) {
+        axios.get(`http://127.0.0.1:8000/first_aid/${id}`)
+          .then(response => {
+            setFirstAidAbout(response.data);
+          })
+          .catch(error => {
+            console.error(error);
+          });
+      } else {
+        setFirstAidAbout(location.state.data);
+      }
+    }, [id, location.state]);
 
   if (!first_aid_about) {
     return <div>Загружаем...</div>;
   }
-  console.log(first_aid_about)
+  // console.log(first_aid_about)
   return (
     <>
       <NavigationBar />

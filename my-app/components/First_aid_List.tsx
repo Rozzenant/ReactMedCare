@@ -45,13 +45,6 @@ const First_aid_List: React.FC = () => {
                   const data = response.data;
                   setFirst_aids(data["first_aids"]);
                   setFiltred_First_aid(data["first_aids"]);
-                  // if (filter_fa.filter_fa === null || filter_fa.filter_fa?.length === 0) {
-                  //     dispatch(setFilter(data['first_aids']))
-                  // } else {
-                  //     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-                  //     // @ts-expect-error
-                  //     setFiltred_First_aid(filter_fa.filter_fa)
-                  // }
               })
               .catch((error) => {
                   console.error(error);
@@ -75,9 +68,11 @@ const First_aid_List: React.FC = () => {
       <Container fluid>
         <Row style={{ display: "flex", gap: "20px" }}>
           {filtredFirst_aid.map((first_aid) => (
-            <Col sm={2} key={first_aid.First_aid_ID}>
-              <First_aid first_aid={first_aid} />
-            </Col>
+              first_aid.Status === "1" ? (
+              <Col sm={2} key={first_aid.First_aid_ID}>
+                <First_aid first_aid={first_aid} />
+              </Col>
+                  ) : null
           ))}
         </Row>
       </Container>

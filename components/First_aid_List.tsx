@@ -6,6 +6,8 @@ import NavigationBar from "../components/Navbar/Navbar";
 import Breadcrumbs from "../components/Breadcrumbs/Breadcrumbs";
 import First_aid_Filter from "../components/Filter/Filter";
 import { mockObjects } from "../src/assets/mockObject";
+import axios from "axios";
+// import Cookies from 'js-cookie';
 
 const First_aid_List: React.FC = () => {
   const [first_aid, setFirst_aids] = useState<First_aid_Inter[]>([]);
@@ -18,29 +20,29 @@ const First_aid_List: React.FC = () => {
     setFiltred_First_aid(filteredFirst_aid);
   };
 
-  useEffect(() => {
-    if (!dataLoaded) {
-      fetch("http://127.0.0.1:8000/first_aid")
-        .then((response) => {
-          if (response.ok) {
-            return response.json();
-          } else {
-            throw new Error("Failed to get Data");
-          }
-        })
-        .then((data) => {
-          setFirst_aids(data["first_aids"]);
-          setFiltred_First_aid(data["first_aids"]);
-          setDataLoaded(true);
-        })
-        .catch((error) => {
-          console.log(error);
-          setFirst_aids(mockObjects);
-          setFiltred_First_aid(mockObjects);
-          setDataLoaded(true);
-        });
-    }
-  }, [dataLoaded]);
+useEffect(() => {
+  if (!dataLoaded) {
+    axios.get("http://127.0.0.1:8000/first_aid")
+      .then(response => {
+        if (response.status === 200) {
+          return response.data;
+        } else {
+          throw new Error("Failed to get Data");
+        }
+      })
+      .then(data => {
+        setFirst_aids(data["first_aids"]);
+        setFiltred_First_aid(data["first_aids"]);
+        setDataLoaded(true);
+      })
+      .catch(error => {
+        // console.log(error);
+        setFirst_aids(mockObjects);
+        setFiltred_First_aid(mockObjects);
+        setDataLoaded(true);
+      });
+  }
+}, [dataLoaded]);
 
   return (
     <>

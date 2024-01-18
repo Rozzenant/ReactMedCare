@@ -174,7 +174,7 @@ const statusOptions = [
                     <Button className="button-style"
                             onClick={() => {
                                 dispatch(removeParams());
-                                setFlag(!flag)
+                                // setFlag(!flag)
                             }}>
                         Очистить
                     </Button>

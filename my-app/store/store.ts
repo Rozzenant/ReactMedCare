@@ -11,7 +11,7 @@ const store = configureStore({
     user: userReducer,
     traumas: traumas,
     filterFirst_Aid: filter_First_aids_Reducer,
-    // filterTraumas: filter_Traumas,
+
 },
 });
 

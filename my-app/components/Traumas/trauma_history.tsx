@@ -17,7 +17,7 @@ const TraumaHistory: React.FC = () => {
     const userTraumas = useSelector((state: RootState) => state.traumas);
     const dispatch = useDispatch();
     const [flag, setFlag] = useState(false)
-    const [countFlag, setCountFlag] = useState(0)
+    // const [countFlag, setCountFlag] = useState(0)
 
 
     const filterTraumas = (search: string) => {
@@ -166,7 +166,7 @@ const statusOptions = [
                             onClick={() => {
                                 filterTraumas(userTraumas.search);
                                 setFlag(!flag);
-                                setCountFlag(countFlag + 1);
+                                // setCountFlag(countFlag + 1);
                             }
                     }>
                         Искать
@@ -190,14 +190,14 @@ const statusOptions = [
               <thead>
                 <tr>
                   <th>Номер</th>
-                  <th>Пользователь</th>
+                  <th>Интересующийся гражданин</th>
                   <th>Поражение</th>
                   <th>Создано</th>
                   <th>Утверждено</th>
                   <th>Завершено</th>
-                  <th>Модератор</th>
+                  <th>Эксперт медицины катастроф</th>
                   <th>Статус</th>
-                  <th>Подтверждение врача</th>
+                  <th>Подтверждение врача общей практики</th>
                   {user.Is_Super ? (
                       <th>Действие</th>
                   ) : (

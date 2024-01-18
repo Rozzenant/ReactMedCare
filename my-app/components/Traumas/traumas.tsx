@@ -9,23 +9,23 @@ import {change_status_trauma_draft, set_trauma_draft_id} from "../../store/UserS
 
 interface FirstAidInt {
   First_aid_ID: number;
-  First_aid_Name?: string;
-  Description?: string;
-  Image_URL?: string;
-  Price?: number;
+  First_aid_Name: string;
+  Description: string;
+  Image_URL: string;
+  Price: string | number;
 }
 
 interface TraumaInt {
-  Trauma_ID?: number;
-  Trauma_Name?: string | null;
-  Status?: string;
-  Date_Creation?: string;
+  Trauma_ID: number;
+  Trauma_Name: string | null;
+  Status: string;
+  Date_Creation: string;
   Date_Approving?: string | null;
   Date_End?: string | null;
   Moderator?: number | null;
-  Creator?: number | null;
-  First_aid_in_Trauma_List?: FirstAidInt[];
-  Confirmation_Doctor?: string;
+  Creator: number | null;
+  First_aid_in_Trauma_List: FirstAidInt[];
+  Confirmation_Doctor: string;
 }
 
 const Traumas: React.FC = () => {
@@ -230,7 +230,11 @@ const Traumas: React.FC = () => {
                         <img src={first_aid.Image_URL} className="card-img-top" alt={first_aid.First_aid_Name} style={{ maxHeight: '400px', objectFit: 'cover' }} />
                         <div className="card-body  text-center">
                           <h5 className="card-title  text-center">{first_aid.First_aid_Name}</h5>
-                          <h6 className="card-subtitle mb-2 text-muted  text-center">{first_aid.Price} $</h6>
+                            {first_aid.Price === 0 ? (
+                                <h6 className="card-subtitle mb-2 text-muted  text-center">Бесплатно</h6>
+                            ):(
+                                <h6 className="card-subtitle mb-2 text-muted  text-center">{first_aid.Price} $</h6>
+                            )}
                           <Button
                             size="sm"
                             onClick={() => {

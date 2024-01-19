@@ -22,14 +22,15 @@ const TraumaHistory: React.FC = () => {
 
     const filterTraumas = (search: string) => {
         dispatch(setSearch(search))
-        if (!(userTraumas.traumas['detail'] === undefined )){
+        if (userTraumas.traumas.length > 0) {
             const filteredData = userTraumas.traumas.filter(
                 (trauma) => {
                     return trauma.Creator_Name.toLowerCase().includes(search.toLowerCase());
                 }
-        );
-        dispatch(setTraumas(filteredData));
+            );
+            dispatch(setTraumas(filteredData));
         }
+
 
   };
 

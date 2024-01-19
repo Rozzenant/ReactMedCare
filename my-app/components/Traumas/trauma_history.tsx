@@ -186,16 +186,20 @@ const statusOptions = [
                           <></>
                       )}
           {userTraumas.traumas && userTraumas.traumas.filter(trauma => trauma.Creator_Name.toLowerCase().includes(userTraumas.search.toLowerCase())).length > 0 ? (
-            <Table striped bordered hover responsive variant="light">
+            <Table bordered striped hover>
               <thead>
                 <tr>
                   <th>Номер</th>
-                  <th>Интересующийся гражданин</th>
+                    {user.Is_Super ? (
+                        <th>Обучающийся</th>
+                    ) : null}
                   <th>Поражение</th>
                   <th>Создано</th>
                   <th>Утверждено</th>
                   <th>Завершено</th>
-                  <th>Эксперт медицины катастроф</th>
+                  {user.Is_Super ? (
+                        <th>Эксперт медицины катастроф</th>
+                    ) : null}
                   <th>Статус</th>
                   <th>Подтверждение врача общей практики</th>
                   {user.Is_Super ? (
@@ -214,12 +218,16 @@ const statusOptions = [
                         {trauma.Trauma_ID}
                       </Link>
                     </td>
-                    <td>{trauma.Creator_Name}</td>
+                    {user.Is_Super ? (
+                        <td>{trauma.Creator_Name}</td>
+                    ) : null}
                     <td>{trauma.Trauma_Name || 'Не названо'}</td>
                     <td>{formatDateTime(trauma.Date_Creation)}</td>
                     <td>{formatDateTime(trauma.Date_Approving) || '-'}</td>
                     <td>{formatDateTime(trauma.Date_End) || '-'}</td>
-                    <td>{trauma.Moderator_Name || "-"}</td>
+                    {user.Is_Super ? (
+                        <td>{trauma.Moderator_Name || "-"}</td>
+                    ) : null}
                     <td>{statusMap(trauma.Status as keyof typeof statusMap)}</td>
                     <td style={{"height": "100px"}}>
                         {doctorStatusMap(trauma.Confirmation_Doctor as keyof typeof doctorStatusMap)}

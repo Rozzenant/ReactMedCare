@@ -17,13 +17,13 @@ interface FirstAidInt {
 
 interface TraumaInt {
   Trauma_ID: number;
-  Trauma_Name: string | null;
+  Trauma_Name: string;
   Status: string;
   Date_Creation: string;
-  Date_Approving?: string | null;
-  Date_End?: string | null;
-  Moderator?: number | null;
-  Creator: number | null;
+  Date_Approving?: string;
+  Date_End?: string;
+  Moderator?: string;
+  Creator: string;
   First_aid_in_Trauma_List: FirstAidInt[];
   Confirmation_Doctor: string;
 }
@@ -34,12 +34,13 @@ const Traumas: React.FC = () => {
   const dispatch = useDispatch();
   const [formData, setFormData] = useState<TraumaInt | null>(null);
   const navigate = useNavigate();
-  const [message, setMessage] = useState('')
+  // const [message, setMessage] = useState('')
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const updatedFormData = { ...formData };
-    updatedFormData.Trauma_Name = e.target.value;
-
-    setFormData(updatedFormData);
+    if (formData) {
+        const updatedFormData = {...formData};
+        updatedFormData.Trauma_Name = e.target.value;
+        setFormData(updatedFormData);
+    }
   };
 
   useEffect(() => {
@@ -199,9 +200,7 @@ const Traumas: React.FC = () => {
 
 
     } catch (error) {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-expect-error
-      setMessage(error.response.data['detail'])
+      // setMessage(error.response.data['detail'])
       console.log('Произошла ошибка:', error);
     }
   };
@@ -255,7 +254,7 @@ const Traumas: React.FC = () => {
             {/*<Button className={"button-style button-style-more"} type="submit" onClick={handleFormSubmit} disabled={!user.trauma_draft}>*/}
             {/*  Изменить поражение*/}
             {/*</Button>*/}
-            <div>{message}</div>
+            {/*<div>{message}</div>*/}
             <Button className={"button-style button-style-more"} onClick={handleFormTrauma} disabled={!user.trauma_draft}>
               Сформировать поражение
             </Button>
